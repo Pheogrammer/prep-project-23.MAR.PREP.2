@@ -4,7 +4,7 @@ import NewsArticle from "./NewsArticle";
 
 function NewsArticles({ city }) {
   const [resultsNews, setResultsNews] = useState(null);
-  const [noNewsFound, setNoNewsFound] = useState(false); // add this state
+  const [noNewsFound, setNoNewsFound] = useState(false);
   // List of keywords to search for
   const WeatherKeywords = [
     "rainfall", "snow", "heat", "weather", "rain",

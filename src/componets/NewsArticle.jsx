@@ -4,19 +4,19 @@ import './NewsArticles.css';
 function NewsArticle({ article }) {
   return (
     <div className='news-card' >
-      <div class="news-image-container">
+      <div className="news-image-container">
         <img className='news-img' src={article.urlToImage} alt={article.title} />
       </div>
       <div className="card-content">
-        <h2>{article.title.length > 80 ?
+        <h2 className='article-head'>{article.title.length > 80 ?
           `${article.title.substring(0, 80)}...` : article.title
         }  </h2>
-        <p className=''>{article.description.length > 200 ?
+        <p className='article-title'>{article.description.length > 200 ?
           `${article.description.substring(0, 200)}...` : article.description
         }</p>
       </div>
       <div className='news-link'>
-        <a href={article.url} target="_blank">Read More</a>
+        <a href={article.url} rel="noreferrer" target="_blank">Read More</a>
       </div>
     </div>
   )
