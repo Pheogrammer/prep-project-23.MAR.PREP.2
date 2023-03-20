@@ -59,6 +59,7 @@ function NewsArticles({ city }) {
     const timer = setTimeout(() => {
       fetch(`https://newsapi.org/v2/everything?q=Weather%20in%20${city}&from=${formatDate(yesterday)}&units=metric&apiKey=${process.env.REACT_APP_WEATHERNEWSKEY}`)
         .then(res => res.json())
+        
         .then(
           (result) => {
             if (result['cod'] !== 200) {
