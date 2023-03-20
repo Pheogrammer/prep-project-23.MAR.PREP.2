@@ -38,10 +38,8 @@ function App() {
         <input
           type="text"
           value={city}
-          onChange={event => setCity(event.target.value)}
-          id="search-input"
-        />
-        <div className="Results" id="current-weather">
+          onChange={event => setCity(event.target.value)} />
+        <div className="Results">
           {!isLoaded && <h2>Loading...</h2>}
           {console.log(results)}
           {isLoaded && results && <>

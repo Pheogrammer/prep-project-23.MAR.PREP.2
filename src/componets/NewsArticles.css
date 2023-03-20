@@ -31,9 +31,6 @@
 
 .news-img {
     width: 100%;
-    min-height: 150px;
-    border-radius: 5px 5px 0 0;
-
 }
 
 @media (max-width: 768px) {
