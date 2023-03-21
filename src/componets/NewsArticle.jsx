@@ -5,7 +5,7 @@ function NewsArticle({ article }) {
   return (
     <div className='news-card' >
       <div className="news-image-container">
-        <img className='news-img' src={article.urlToImage} alt={article.title} />
+        <img className='news-img' src={article.image.url} alt={article.title} />
       </div>
       <div className="card-content">
         <h2>{article.title.length > 80 ?

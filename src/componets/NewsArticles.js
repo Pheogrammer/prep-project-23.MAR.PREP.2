@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import axios from "axios";
 import './NewsArticles.css';
 import NewsArticle from "./NewsArticle";
 
@@ -47,30 +47,51 @@ function NewsArticles({ city }) {
 
   // Check if the article contains a weather keyword
   function containsWeatherKeyword(article) {
+    const title = article.title.toLowerCase();
     const description = article.description.toLowerCase();
-    return WeatherKeywords.some(keyword => description.includes(keyword));
+    return WeatherKeywords.some(keyword => title.includes(keyword) || description.includes(keyword));
   }
+  
 
+
+  const requestOptions = {
+    method: 'GET',
+    url: 'https://contextualwebsearch-websearch-v1.p.rapidapi.com/api/search/NewsSearchAPI',
+    params: {
+      q: 'Weather in ' + city,
+      pageNumber: '1',
+      pageSize: '50',
+      autoCorrect: 'true',
+      fromPublishedDate: 'null',
+      toPublishedDate: 'null'
+    },
+    headers: {
+      'X-RapidAPI-Key': '7414da5a00msh9da597818ec1d4ap130955jsn57ffab675690',
+      'X-RapidAPI-Host': 'contextualwebsearch-websearch-v1.p.rapidapi.com'
+    }
+  };
+  
   // Fetch the articles
   useEffect(() => {
     const timer = setTimeout(async () => {
       try {
-        const response = await fetch(`https://api.mediastack.com/v1/news?access_key=f33b5637f491d2e72a26120716421b8b&keywords=${city}&date=${formatDate(yesterday)},${formatDate(today)}`);
-        const result = await response.json();
-        console.log(result.data);
+        const response = await axios(requestOptions);
+        const result = response.data;
+        console.log(result.value);
         console.log(city);
         if (result['cod'] !== 200) {
           // Fetch Articles, and filter out articles that don't contain weather keywords
-          const articles = Object.values(result.data);
+          const articles = Object.values(result.value);
           const filteredArticles = articles.filter(article => containsWeatherKeyword(article));
-
+    
           // slice the first 4 articles
-          if (filteredArticles.length === 0) { 
+          const showingArticles = filteredArticles.slice(0, 4);
+  
+          if (showingArticles.length === 0) { 
             setResultsNews(null);
             setNoNewsFound(true); 
           } else {
-            const ShowingArticles = Object.values(filteredArticles).slice(0, 4);
-            setResultsNews(ShowingArticles);
+            setResultsNews(showingArticles);
             setNoNewsFound(false); 
           }
         } else {
@@ -81,7 +102,7 @@ function NewsArticles({ city }) {
         // console.log(error)
       }
     }, 2000);
-
+  
     return () => {
       clearTimeout(timer); 
     };
