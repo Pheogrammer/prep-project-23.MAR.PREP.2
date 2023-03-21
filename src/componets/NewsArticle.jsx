@@ -4,7 +4,7 @@ import './NewsArticles.css';
 function NewsArticle({ article }) {
   return (
     <div className='news-card' >
-      <div class="news-image-container">
+      <div className="news-image-container">
         <img className='news-img' src={article.urlToImage} alt={article.title} />
       </div>
       <div className="card-content">

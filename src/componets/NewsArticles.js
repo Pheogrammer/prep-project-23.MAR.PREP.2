@@ -1,31 +1,29 @@
 import { useEffect, useState } from "react";
+import axios from 'axios';
+
 import './NewsArticles.css';
 import NewsArticle from "./NewsArticle";
 
 function NewsArticles({ city }) {
   const [resultsNews, setResultsNews] = useState(null);
-  const [noNewsFound, setNoNewsFound] = useState(false); // add this state
+  const [noNewsFound, setNoNewsFound] = useState(false);
   // List of keywords to search for
   const WeatherKeywords = [
-    "rainfall", "snow", "heat", "weather", "rain",
-    "cloud", "temperature", "overcast", "sunrise",
+    "rainfall", "snow", "heat", "weather",
+    "cloud", "temperature", "sunrise",
     "tornado", "sunset", "humidity", "cold",
-    "wind", "cloudy", "heat wave", "fog", "breeze", "humid",
-    "blustery", "thunder", "heat index", "thunderstorm",
-    "drought", "tropical", "water cycle", "temperate",
-    "moisture", "drizzle", "warm", "dry", "hail", "icicle", "climate", "storm",
-    "frosty", "dew point", "drought", "flood", "muggy", "gale", "flash flood",
-    "atmosphere", "weather forecast", "weather report", "weather station",
-    "cold front", "warm front", "weather map", "weather satellite",
-    "mist", "weather balloon", "weather vane", "weather radar",
-    "isobar", "cold snap", "condensation", "forecast", "ice storm",
+    "wind", "cloudy", "fog", "breeze", "humid",
+    "blustery", "thunderstorm",
+    "drought", "moisture", "warm", "hail", "climate",
+    "frosty", "flood", "gale",
+    "atmosphere", "mist",
+    "isobar", "condensation", "forecast",
     "freeze", "barometric", "gust", "snowfall", "snowstorm", "snowdrift",
-    "whirlwind", "hurricane", "tornado", "cyclone", "air", "balmy", "avalanche",
+    "whirlwind", "hurricane", "cyclone", "air", "balmy", "avalanche",
     "barometer", "blizzard", "chill", "cloudburst", "damp",
-    "air pressure", "frost", "spring", "smog", "ozone", "fall",
-    "winter", "summer", "storm surge", "rain gage",
-    "low pressure", "high pressure", "barometric pressure",
-    "wind chill", "sleet", "sky", "dew", "surge", "monsoon",
+    "frost", "spring", "smog", "ozone", "fall",
+    "winter", "summer",
+    "sleet", "sky", "dew", "surge", "monsoon",
     "permafrost"
   ];
 
@@ -50,55 +48,54 @@ function NewsArticles({ city }) {
 
   // Check if the article contains a weather keyword
   function containsWeatherKeyword(article) {
-    const title = article.title.toLowerCase();
-    return WeatherKeywords.some(keyword => title.includes(keyword));
+    const description = article.description.toLowerCase();
+    return WeatherKeywords.some(keyword => description.includes(keyword));
   }
 
   // Fetch the articles
   useEffect(() => {
-    const timer = setTimeout(() => {
-      fetch(`https://newsapi.org/v2/everything?q=Weather%20in%20${city}&from=${formatDate(yesterday)}&units=metric&apiKey=${process.env.REACT_APP_WEATHERNEWSKEY}`)
-        .then(res => res.json())
-        
-        .then(
-          (result) => {
-            if (result['cod'] !== 200) {
-              // Fetch Articles, and filter out articles that don't contain weather keywords
-              const articles = Object.values(result.articles);
-              const filteredArticles = articles.filter(article => containsWeatherKeyword(article));
+    const timer = setTimeout(async () => {
+      try {
+        const response = await fetch(`http://api.mediastack.com/v1/news?access_key=f33b5637f491d2e72a26120716421b8b&keywords=${city}&date=${formatDate(yesterday)},${formatDate(today)}`);
+        const result = await response.json();
+        console.log(result.data);
+        console.log(city);
+        if (result['cod'] !== 200) {
+          // Fetch Articles, and filter out articles that don't contain weather keywords
+          const articles = Object.values(result.data);
+          const filteredArticles = articles.filter(article => containsWeatherKeyword(article));
 
-              // slice the first 4 articles
-              if (filteredArticles.length === 0) { // check if filteredArticles is empty
-                setResultsNews(null);
-                setNoNewsFound(true); // set noNewsFound to true
-              } else {
-                const ShowingArticles = Object.values(filteredArticles).slice(0, 4);
-                setResultsNews(ShowingArticles);
-                setNoNewsFound(false); // set noNewsFound to false
-              }
-            } else {
-
-              // console.log(result)
-            }
-          },
-          (error) => {
-            // setError(error);
-            // console.log(error)
+          // slice the first 4 articles
+          if (filteredArticles.length === 0) { 
+            setResultsNews(null);
+            setNoNewsFound(true); 
+          } else {
+            const ShowingArticles = Object.values(filteredArticles).slice(0, 4);
+            setResultsNews(ShowingArticles);
+            setNoNewsFound(false); 
           }
-        )
+        } else {
+          // console.log(result)
+        }
+      } catch (error) {
+        // setError(error);
+        // console.log(error)
+      }
     }, 2000);
 
-    return () => clearTimeout(timer);
-  }, [city])
+    return () => {
+      clearTimeout(timer); 
+    };
+  }, [city]);
 
-  // Preview of the articles
+
 
   return (
     <>
       <div className="NewsArticles">
         <h2>News Articles in {city}</h2>
         {noNewsFound ? (
-          <p>No news found</p> // render "No news found" message if noNewsFound is true
+          <p>No news found</p>
         ) : resultsNews ? (
           <div className="article-layout">
             {resultsNews.map((article, index) => (
