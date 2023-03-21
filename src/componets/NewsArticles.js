@@ -66,7 +66,7 @@ function NewsArticles({ city }) {
       toPublishedDate: 'null'
     },
     headers: {
-      'X-RapidAPI-Key': '7414da5a00msh9da597818ec1d4ap130955jsn57ffab675690',
+      'X-RapidAPI-Key': process.env.REACT_APP_APIKEY,
       'X-RapidAPI-Host': 'contextualwebsearch-websearch-v1.p.rapidapi.com'
     }
   };
