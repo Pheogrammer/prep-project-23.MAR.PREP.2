@@ -55,7 +55,7 @@ function NewsArticles({ city }) {
   useEffect(() => {
     const timer = setTimeout(async () => {
       try {
-        const response = await fetch(`http://api.mediastack.com/v1/news?access_key=f33b5637f491d2e72a26120716421b8b&keywords=${city}&date=${formatDate(yesterday)},${formatDate(today)}`);
+        const response = await fetch(`https://api.mediastack.com/v1/news?access_key=f33b5637f491d2e72a26120716421b8b&keywords=${city}&date=${formatDate(yesterday)},${formatDate(today)}`);
         const result = await response.json();
         console.log(result.data);
         console.log(city);
