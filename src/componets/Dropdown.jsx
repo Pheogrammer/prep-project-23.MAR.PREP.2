@@ -5,7 +5,7 @@ function Dropdown({ searchcity, setSearchCity, display, setDisplay }) {
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [results, setResults] = useState([]);
-    
+
 
     useEffect(() => {
         fetch(`https://api.geoapify.com/v1/geocode/autocomplete?text=${searchcity}&apiKey=${process.env.REACT_APP_AUTOCOMPLETE_APIKEY}`)
@@ -17,7 +17,7 @@ function Dropdown({ searchcity, setSearchCity, display, setDisplay }) {
                     } else {
                         setIsLoaded(true);
                         setResults(result.features);
-// 
+                        // 
                     }
                 },
                 (error) => {
@@ -36,15 +36,17 @@ function Dropdown({ searchcity, setSearchCity, display, setDisplay }) {
         return (
             <div>
                 <ul className={display ? "city-lists" : "city-lists hidden"}>
-                    {searchcity.length > 0 ? results.map((result, index) => (
+                    {searchcity.length > 0 ? Array.from(new Set(results.filter(result => result.properties.city && result.properties.country_code).map(result => `${result.properties.city},${result.properties.country_code}`))).map((city, index) => (
                         <li
                             onClick={() => {
-                                setSearchCity(result.properties.city);
+                                const [selectedCity, selectedCountryCode] = city.split(',');
+                                setSearchCity(selectedCity);
                                 setDisplay(false);
                             }}
                             className="city-list"
                             key={index}>
-                            {result.properties.city}, <span className="country-code" >{result.properties.country_code}</span></li>
+                            {city}
+                        </li>
                     )) : <p></p>}
                 </ul>
             </div>
