@@ -2,43 +2,56 @@ import { useEffect, useState } from "react";
 import './App.css';
 import logo from './mlh-prep.png'
 import NewsArticles from './componets/NewsArticles';
-
+import Dropdown from "./componets/Dropdown";
 function App() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [city, setCity] = useState("New York City")
+  const [city, setCity] = useState("New York City");
+  const [display, setDisplay] = useState(false);
   const [results, setResults] = useState(null);
 
   useEffect(() => {
-    fetch("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=metric" + "&appid=" + process.env.REACT_APP_APIKEY)
-      .then(res => res.json())
-      .then(
-        (result) => {
-          if (result['cod'] !== 200) {
-            setIsLoaded(false)
-          } else {
+    const timer = setTimeout(async () => {
+      fetch("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=metric" + "&appid=" + process.env.REACT_APP_APIKEY)
+        .then(res => res.json())
+        .then(
+          (result) => {
+            if (result['cod'] !== 200) {
+              setIsLoaded(false)
+            } else {
+              setIsLoaded(true);
+              setResults(result);
+            }
+          },
+          (error) => {
             setIsLoaded(true);
-            setResults(result);
+            setError(error);
           }
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      )
-  }, [city])
+        )
+    }, 2000); // add a comma after 2000
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [city]);
+  
 
   if (error) {
     return <div>Error: {error.message}</div>;
   } else {
     return <>
       <img className="logo" src={logo} alt="MLH Prep Logo"></img>
-      <div>
+      <div className="weather-area" >
         <h2>Enter a city below 👇</h2>
-        <input
-          type="text"
-          value={city}
-          onChange={event => setCity(event.target.value)} />
+        <div className="search-zone" >
+          <input
+            type="text"
+            value={city}
+            onChange={event => {
+              setCity(event.target.value)
+              setDisplay(true)
+              }} />
+          <Dropdown searchcity={city} setSearchCity = {setCity} display={display} setDisplay={setDisplay}/>
+        </div>
         <div className="Results">
           {!isLoaded && <h2>Loading...</h2>}
           {console.log(results)}
